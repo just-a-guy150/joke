@@ -5,6 +5,7 @@ const fs = require('fs');
 const dataPath = path.join(__dirname, 'data');
 
 const server = http.createServer((request, response) => {
+    response.setHeader('Access-Control-Allow-Origin', '*');
     let url = request.url;
     let param
     if (request.url.includes('?')) {
@@ -19,11 +20,11 @@ const server = http.createServer((request, response) => {
             if (request.method === 'GET') getAllJokes(response);
             if (request.method === 'POST') addJoke(request, response);
             break;
-        case '/like':
-            setLike(response, id);
-            break;
         case '/joke':
             getJoke(response, id);
+            break;
+        case '/like':
+            setLike(response, id);
             break;
         case '/dislike':
             setDislike(response, id);
@@ -57,7 +58,7 @@ function getAllJokes(response) {
         const fileContent = fs.readFileSync(filePath, 'utf-8');
         const fileObject = JSON.parse(fileContent);
 
-        jokes.push(fileObject.content);
+        jokes.push(fileObject);
     }
 
     response.writeHead(200, { "Content-type": 'application/json' });
